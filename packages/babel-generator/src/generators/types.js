@@ -138,6 +138,9 @@ export function NumericLiteral(node: Object) {
 export function StringLiteral(node: Object, parent: Object) {
   let raw = this.getPossibleRaw(node);
   if (!this.format.minified && raw != null) {
+    const quoteChar = this.format.quotes === 'single' ? '\'' : '"';
+    raw = raw.slice(1, -1);
+    raw = `${quoteChar}${raw}${quoteChar}`;
     this.token(raw);
     return;
   }
