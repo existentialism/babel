@@ -17,7 +17,10 @@ export const visitor = {
         const declar = t.variableDeclaration("let", [
           t.variableDeclarator(param.node, uid)
         ]);
-        declar._blockHoist = outputParamsLength - i;
+
+        // Match what we do with default params and hoist to the very top
+        // (priority of 3), while keeping param order.
+        declar._blockHoist = (outputParamsLength - i) + 3;
 
         path.ensureBlock();
         path.get("body").unshiftContainer("body", declar);

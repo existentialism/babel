@@ -28,6 +28,16 @@ function isSafeBinding(scope, node) {
   return kind === "param" || kind === "local";
 }
 
+/**
+ * Returns a block hoist priority value that places it at the _very_ top
+ * (priority of 3) while keeping param order
+ *
+ * Ref: babel-core/src/transformation/internal-plugins/block-hoist
+ */
+function getHoistPriority(node, paramIndex) {
+  return (node.params.length - paramIndex) + 3;
+}
+
 const iifeVisitor = {
   ReferencedIdentifier(path, state) {
     const { scope, node } = path;
@@ -70,7 +80,9 @@ export const visitor = {
         ARGUMENT_KEY:  t.numericLiteral(i),
         ARGUMENTS:     argsIdentifier
       });
-      defNode._blockHoist = node.params.length - i;
+
+      defNode._blockHoist = getHoistPriority(node, i);
+
       body.push(defNode);
     }
 
@@ -121,7 +133,9 @@ export const visitor = {
       if (param._isDefaultPlaceholder) continue;
 
       const declar = buildCutOff(param, argsIdentifier, t.numericLiteral(i));
-      declar._blockHoist = node.params.length - i;
+
+      declar._blockHoist = getHoistPriority(node, i);
+
       body.push(declar);
     }
 

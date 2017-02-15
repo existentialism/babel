@@ -1,0 +1,7 @@
+{
+  "plugins": [
+    "syntax-jsx",
+    "transform-react-constant-elements",
+    "transform-es2015-parameters"
+  ]
+}
